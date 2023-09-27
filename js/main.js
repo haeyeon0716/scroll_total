@@ -3,8 +3,9 @@ const btns = document.querySelectorAll('ul li');
 const speed = 500;
 let posArr = null;
 
-getPos
-//처음 브라우거가 리사이즈 될 때마다 호출해서 세로 위치값 갱신
+//처음 로딩시 한번 호출
+getPos();
+//브라우저가 리사이즈 될때마다 호출해서 세로 위치값을 갱신
 window.addEventListener('resize', getPos);
 
 //버튼 반복돌면서 이벤트 연결
@@ -18,7 +19,7 @@ btns.forEach((btn, idx) => {
 //브라우저 스크롤시 현재스크롤 위치값이 특정 순번의 섹션영역에 도달하면 해당 순번의 버튼 활성화
 window.addEventListener('scroll', () => {
 	const scroll = window.scrollY;
-	const baseLine = -window.innerHeight/3; //현재보이는 영역의 섹션의 영역이 전체 영역의 3분의 2이상 보일때 버튼
+	const baseLine = -window.innerHeight / 3; //현재 보이는 섹션의 영역이 전체 영역의 3분의 2이상 보일떄 버튼 활성화
 
 	posArr.forEach((_, idx) => {
 		if (scroll >= posArr[idx] + baseLine) {
@@ -29,8 +30,8 @@ window.addEventListener('scroll', () => {
 });
 
 //호출시 posArr라는 전역변수에 세로위치값을 담아주는 함수
-function getPos(){
-	posArr =[];
+function getPos() {
+	posArr = [];
 	secs.forEach((sec) => posArr.push(sec.offsetTop));
 	console.log(posArr);
 }

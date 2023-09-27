@@ -13,6 +13,27 @@ btns.forEach((btn,idx)=>{
 	})
 })
 
+//브라우저 스크롤시 현재 스크롤 위치값이 특정 순번에 섹션 영역에 도달하면 해단 순번에 버튼 활성화
+window.addEventListener('scroll', ()=>{
+	const scroll = window.scrollY;
+	if(scroll>= posArr[0]){
+		btns.forEach(btn => btn.classList.remove('on'));
+		btns[0].classList.add('on')
+	}
+	if(scroll>= posArr[1]){
+		btns.forEach(btn => btn.classList.remove('on'));
+		btns[1].classList.add('on')
+	}
+	if(scroll>= posArr[2]){
+		btns.forEach(btn => btn.classList.remove('on'));
+		btns[2].classList.add('on')
+	}
+	if(scroll>= posArr[3]){
+		btns.forEach(btn => btn.classList.remove('on'));
+		btns[3].classList.add('on')
+	}
+})
+
 
 
 

@@ -1,41 +1,38 @@
 const secs = document.querySelectorAll('section');
-const btns = document.querySelectorAll('ul li')
+const btns = document.querySelectorAll('ul li');
 const speed = 500;
-let posArr =[];
-//로딩이 되자마자 스크롤 이동해야 되는 section의 세로 위치값을 배열에 저장
-secs.forEach(sec => posArr.push(sec.offsetTop));
+let posArr = null;
 
-//버튼 반복 돌ㄹ면서 이벤트 연결
-btns.forEach((btn,idx)=>{
+getPos
+//처음 브라우거가 리사이즈 될 때마다 호출해서 세로 위치값 갱신
+window.addEventListener('resize', getPos);
+
+//버튼 반복돌면서 이벤트 연결
+btns.forEach((btn, idx) => {
 	//각 버튼 클릭시 클릭한 순번의 세로 섹션 배열 위치값으로 스크롤 모션 이동
-	btn.addEventListener('click', ()=>{
-		new Anime(window, {scroll: posArr[idx]}, {duration: speed})
-	})
-})
+	btn.addEventListener('click', () => {
+		new Anime(window, { scroll: posArr[idx] }, { duration: speed });
+	});
+});
 
-//브라우저 스크롤시 현재 스크롤 위치값이 특정 순번에 섹션 영역에 도달하면 해단 순번에 버튼 활성화
-window.addEventListener('scroll', ()=>{
+//브라우저 스크롤시 현재스크롤 위치값이 특정 순번의 섹션영역에 도달하면 해당 순번의 버튼 활성화
+window.addEventListener('scroll', () => {
 	const scroll = window.scrollY;
-	if(scroll>= posArr[0]){
-		btns.forEach(btn => btn.classList.remove('on'));
-		btns[0].classList.add('on')
-	}
-	if(scroll>= posArr[1]){
-		btns.forEach(btn => btn.classList.remove('on'));
-		btns[1].classList.add('on')
-	}
-	if(scroll>= posArr[2]){
-		btns.forEach(btn => btn.classList.remove('on'));
-		btns[2].classList.add('on')
-	}
-	if(scroll>= posArr[3]){
-		btns.forEach(btn => btn.classList.remove('on'));
-		btns[3].classList.add('on')
-	}
-})
 
+	posArr.forEach((_, idx) => {
+		if (scroll >= posArr[idx]) {
+			btns.forEach((btn) => btn.classList.remove('on'));
+			btns[idx].classList.add('on');
+		}
+	});
+});
 
-
+//호출시 posArr라는 전역변수에 세로위치값을 담아주는 함수
+function getPos(){
+	posArr =[];
+	secs.forEach((sec) => posArr.push(sec.offsetTop));
+	console.log(posArr);
+}
 
 function splitText(selector, interval = 0, delay = 0) {
 	let count = 0;

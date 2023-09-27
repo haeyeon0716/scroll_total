@@ -24,29 +24,52 @@ class Anime {
 	//타입에 따라서 들어온 value값을 보정해주는 연산
 	getValue(key, value, type) {
 		let currentValue = null;
-		currentValue = parseFloat(getComputedStyle(this.selector)[key]);
-		key === 'scroll' ? (currentValue = this.selector.scrollY) : (currentValue = parseFloat(getComputedStyle(this.selector)[key]));
+		if (key !== 'scroll') {
+			currentValue = parseFloat(getComputedStyle(this.selector)[key]);
+		}
+
+		key === 'scroll'
+			? (currentValue = this.selector.scrollY)
+			: (currentValue = parseFloat(getComputedStyle(this.selector)[key]));
 
 		if (type === 'percent') {
-			const parentW = parseInt(getComputedStyle(this.selector.parentElement).width);
-			const parentH = parseInt(getComputedStyle(this.selector.parentElement).height);
+			const parentW = parseInt(
+				getComputedStyle(this.selector.parentElement).width
+			);
+			const parentH = parseInt(
+				getComputedStyle(this.selector.parentElement).height
+			);
 			const x = ['left', 'right', 'width'];
 			const y = ['top', 'bottom', 'height'];
-			if (key.includes('margin') || key.includes('padding')) return console.error('margin, padding값은 퍼센트 모션처리할 수 없습니다.');
-			for (let cond of x) key === cond && (currentValue = (currentValue / parentW) * 100);
-			for (let cond of y) key === cond && (currentValue = (currentValue / parentH) * 100);
+			if (key.includes('margin') || key.includes('padding'))
+				return console.error(
+					'margin, padding값은 퍼센트 모션처리할 수 없습니다.'
+				);
+			for (let cond of x)
+				key === cond && (currentValue = (currentValue / parentW) * 100);
+			for (let cond of y)
+				key === cond && (currentValue = (currentValue / parentH) * 100);
 			const percentValue = parseFloat(value);
-			percentValue !== currentValue && requestAnimationFrame((time) => this.run(time, key, currentValue, percentValue, type));
+			percentValue !== currentValue &&
+				requestAnimationFrame((time) =>
+					this.run(time, key, currentValue, percentValue, type)
+				);
 		}
 		if (type === 'color') {
 			this.isBg = true;
 			currentValue = getComputedStyle(this.selector)[key];
 			currentValue = this.colorToArray(currentValue);
 			value = this.hexToRgb(value);
-			value !== currentValue && requestAnimationFrame((time) => this.run(time, key, currentValue, value, type));
+			value !== currentValue &&
+				requestAnimationFrame((time) =>
+					this.run(time, key, currentValue, value, type)
+				);
 		}
 		if (type === 'basic') {
-			value !== currentValue && requestAnimationFrame((time) => this.run(time, key, currentValue, value, type));
+			value !== currentValue &&
+				requestAnimationFrame((time) =>
+					this.run(time, key, currentValue, value, type)
+				);
 		}
 	}
 
@@ -56,7 +79,13 @@ class Anime {
 		this.setValue(key, result, type);
 
 		progress < 1
-			? ['percent', 'color', 'basic'].map((el) => type === el && requestAnimationFrame((time) => this.run(time, key, currentValue, value, type)))
+			? ['percent', 'color', 'basic'].map(
+					(el) =>
+						type === el &&
+						requestAnimationFrame((time) =>
+							this.run(time, key, currentValue, value, type)
+						)
+			  )
 			: this.callback && this.callback();
 	}
 
@@ -75,14 +104,26 @@ class Anime {
 			ease2: [0, 1.82, 0.94, -0.73],
 		};
 
-		Object.keys(easingPresets).map((key) => this.easeType === key && (easingProgress = BezierEasing(...easingPresets[key])(progress)));
-		return [progress, this.isBg ? currentValue.map((curVal, idx) => curVal + (value[idx] - curVal) * easingProgress) : currentValue + (value - currentValue) * easingProgress];
+		Object.keys(easingPresets).map(
+			(key) =>
+				this.easeType === key &&
+				(easingProgress = BezierEasing(...easingPresets[key])(progress))
+		);
+		return [
+			progress,
+			this.isBg
+				? currentValue.map(
+						(curVal, idx) => curVal + (value[idx] - curVal) * easingProgress
+				  )
+				: currentValue + (value - currentValue) * easingProgress,
+		];
 	}
 
 	//type에 따라서 넘어온 result값을 실제 DOM의 스타일 객체에 연결
 	setValue(key, result, type) {
 		if (type === 'percent') this.selector.style[key] = result + '%';
-		else if (type === 'color') this.selector.style[key] = `rgb(${result[0]},${result[1]},${result[2]})`;
+		else if (type === 'color')
+			this.selector.style[key] = `rgb(${result[0]},${result[1]},${result[2]})`;
 		else if (key === 'opacity') this.selector.style[key] = result;
 		else if (key === 'scroll') this.selector.scroll(0, result);
 		else this.selector.style[key] = result + 'px';
@@ -96,7 +137,8 @@ class Anime {
 	//hex방식으로 시작하는 문자값에서 색상에 활용되는 숫자값 3개를 배열로 리턴 (변경하려고 하는 색상값 변환)
 	hexToRgb(hexColor) {
 		const hex = hexColor.replace('#', '');
-		const rgb = hex.length === 3 ? hex.match(/a-f\d/gi) : hex.match(/[a-f\d]{2}/gi);
+		const rgb =
+			hex.length === 3 ? hex.match(/a-f\d/gi) : hex.match(/[a-f\d]{2}/gi);
 
 		return rgb.map((el) => {
 			if (el.length === 1) el = el + el;
